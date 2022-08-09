@@ -16,8 +16,13 @@
           <label for="">密码</label>
           <!-- <el-input type="password" v-model="ruleForm.Pass" autocomplete="off"></el-input> -->
           <el-input placeholder="请输入密码" v-model="ruleForm.Pass" show-password maxlength="10" minlengh="6"></el-input>
-
         </el-form-item>
+
+        <el-form-item  prop="Passs" class="item-from" v-if="model ==='register'">
+          <label for="">重复密码</label>
+          <el-input placeholder="请输入密码" v-model="ruleForm.Passs" show-password maxlength="10" minlengh="6"></el-input>
+        </el-form-item>
+        <!-- v-show display：none v-if 删除dom ture 请求接口 -->
 
         <el-form-item  prop="code" class="item-from">
           
@@ -36,6 +41,8 @@
   </div>
 </template>
 <script type="module">
+import {abc} from '@/utils/validata.js'; 
+import { registerRuntimeCompiler } from 'vue';
 export default{
   name:'login',
   data(){
@@ -68,9 +75,10 @@ export default{
         }
       };
       var Pass = (rule, value, callback) => {
+        if(this.model==='login'){callback();}
         if (value === '') {
           callback(new Error('请输入密码'));
-        } else if (value !== this.ruleForm.pass) {
+        } else if (value !== this.ruleForm.Passs) {
           callback(new Error('两次输入密码不一致!'));
         } else {
           callback();
@@ -80,6 +88,7 @@ export default{
       ruleForm: {
           email: '',
           Pass: '',
+          Passs: '',
           code: ''
         },
         rules: {
@@ -89,14 +98,18 @@ export default{
           Pass: [
             { validator: Pass, trigger: 'blur' }
           ],
+          Passs: [
+            { validator: Pass, trigger: 'blur' }
+          ],
           code: [
             { validator: code, trigger: 'blur' }
           ]
         },
       menuTab:[
-        {txt:'登录',current:false},
-        {txt:'注册',current:false}
-      ]
+        {txt:'登录',current:false ,type:'login'},
+        {txt:'注册',current:false ,type:'register' }
+      ],
+      model:'login',
     }
   },
   mounted(){
@@ -108,6 +121,7 @@ export default{
         element.current=false
       });
       data.current=true
+      this.model=data.type
     }
   },
   submitForm(formName) {
